@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Support either a local CA file path or certificate text from Render.
 db_ssl_ca = os.getenv("DB_SSL_CA")
 
 if db_ssl_ca and "-----BEGIN CERTIFICATE-----" in db_ssl_ca:
@@ -22,14 +21,18 @@ if db_ssl_ca and "-----BEGIN CERTIFICATE-----" in db_ssl_ca:
 
 
 def get_connection():
-    connection = mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-        port=int(os.getenv("DB_PORT", "3306")),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME"),
-        ssl_ca=db_ssl_ca,
-        ssl_verify_cert=True
-    )
+    connection_config = {
+        "host": os.getenv("DB_HOST"),
+        "port": int(os.getenv("DB_PORT", "3306")),
+        "user": os.getenv("DB_USER"),
+        "password": os.getenv("DB_PASSWORD"),
+        "database": os.getenv("DB_NAME"),
+    }
+
+    if db_ssl_ca:
+        connection_config["ssl_ca"] = db_ssl_ca
+        connection_config["ssl_verify_cert"] = True
+
+    connection = mysql.connector.connect(**connection_config)
 
     return connection
