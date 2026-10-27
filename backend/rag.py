@@ -35,23 +35,26 @@ def splitter(documents):
 
 
 ## create the embeddings
+from functools import lru_cache
 
+@lru_cache(maxsize=1)
 def create_embeddings():
-
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
-
     return embeddings
 
 
 ## vector store
-def create_vector_store(chunks,embedding_model):
-
+def create_vector_store(chunks, embedding_model):
     vector_store = FAISS.from_documents(
-        documents=chunks,
+        documents=chunks[:1],
         embedding=embedding_model
     )
+
+    for start in range(1, len(chunks), 8):
+        batch = chunks[start:start + 8]
+        vector_store.add_documents(batch)
 
     return vector_store
 
