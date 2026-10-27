@@ -233,17 +233,9 @@ def update_title(
 ## doc uploading and vector creation
 # Upload and process PDF
 
-UPLOAD_DIR = os.path.join(
-    os.path.dirname(__file__),
-    "data",
-    "uploads"
-)
 
-VECTOR_DIR = os.path.join(
-    os.path.dirname(__file__),
-    "data",
-    "vector_stores"
-)
+UPLOAD_DIR = "/tmp/studymind_uploads"
+VECTOR_DIR = "/tmp/studymind_vector_stores"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(VECTOR_DIR, exist_ok=True)
